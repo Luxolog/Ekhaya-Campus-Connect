@@ -382,3 +382,56 @@ This confirms a repository migration-chain completeness gap. It does not prove t
 - Recover original migration source from the original authoring environment, CI/deployment artifacts, backups or another verified repository ref.
 - If source recovery fails, document the missing provenance and establish a reviewed forward baseline from the verified live schema. Do not fabricate historical SQL or retroactively claim a baseline is replayable.
 - No live database or PR state was changed by this inspection.
+
+
+## 19. RLS-to-grant alignment review — 15 November 2026
+
+A read-only query of pg_policies was run against the live project after the ACL review. The following is a preliminary minimum-operation design derived from the current policies. It is not an executable grant script and must be tested in a non-production environment before approval.
+
+### 19.1 Operations evidenced by current policies
+
+| Table | Anonymous client | Authenticated client | Notes / required caution |
+|---|---|---|---|
+| colleges | No access indicated | SELECT | Membership-scoped SELECT policy |
+| college_memberships | No access indicated | SELECT | Own-membership SELECT policy |
+| student_profiles | No access indicated | SELECT, INSERT, UPDATE | Own-profile and active-consent college read policies; signup trigger separately inserts via SECURITY DEFINER |
+| courses | SELECT | SELECT, INSERT, UPDATE, DELETE | Public SELECT only for published courses at active colleges; writes limited by current staff-role policies |
+| student_consents | No access indicated | SELECT, INSERT, UPDATE | Student-owned consent grant/revoke; college members can currently read relevant college consents |
+| applications | No access indicated | SELECT, INSERT, UPDATE | Student-owned create/read and college membership read; staff UPDATE role list is explicit |
+| application_documents | No access indicated | SELECT, INSERT | Applicant/college-member reads; applicant-owned inserts |
+| audit_events | No access indicated | SELECT | Relevant college staff SELECT only; no client INSERT/UPDATE/DELETE policy observed |
+| college_registration_requests | INSERT | INSERT | Public request submission constrained to pending and unreviewed state |
+
+The table is a policy-derived starting point, not a statement that each role already has only these privileges. Existing direct ACLs and default privileges remain broader than this proposed operational shape.
+
+### 19.2 Required review before converting this into SQL
+
+1. Confirm whether profile creation should remain exclusively in the trusted signup trigger or whether authenticated direct INSERT is still needed. The current profile INSERT policy exists, but the trigger already performs bootstrap creation.
+2. Confirm whether any client-side workflow performs physical DELETE on any table. No current DELETE RLS policy was observed except courses; do not grant DELETE merely because a broad ACL currently includes it.
+3. Confirm whether college staff need direct application UPDATE or whether status transitions should move to a trusted server-side operation with an explicit state machine and audit event.
+4. Decide how audit events are appended. The current policy set exposes relevant events for SELECT but provides no client append policy. Prefer a trusted, narrowly scoped append path; do not grant clients broad INSERT/UPDATE/DELETE on the audit table.
+5. Review column-level exposure and mutation risks. Table-level grants plus row-level policies do not prevent a user from changing sensitive columns that the current UPDATE policy does not separately protect. Evaluate column grants or trusted RPC/server operations for profile fields, application state, consent metadata and course ownership.
+6. Confirm the exact function and trigger privilege behaviour for the signup bootstrap before changing function grants or ownership.
+7. Review public course SELECT fields for data minimisation; RLS filters rows but does not hide sensitive columns in a selected row.
+
+### 19.3 Default-privilege remediation
+
+The existing default ACLs must be corrected for each actual object owner that creates application objects. The change plan must explicitly cover future tables, functions and sequences in public. A change to defaults does not retroactively repair existing objects, and a table-level REVOKE does not automatically fix future-object defaults.
+
+Before applying defaults, inventory object ownership and migration execution roles. Test creation of a representative table, function and sequence under each relevant owner in a non-production environment, then inspect effective privileges for anon, authenticated and service_role.
+
+### 19.4 Acceptance tests for the grant plan
+
+The non-production test suite must assert both allowed and denied operations:
+- Anonymous: published active-college course SELECT and pending college-request INSERT succeed; unpublished course reads, internal table reads and request reads fail.
+- Student: own profile read/update, own consent grant/revoke, own application submission/read and own document metadata insert/read succeed; another student's rows and unrelated college data fail.
+- College staff: only assigned college rows are visible; role-specific course writes and permitted application actions succeed; cross-college reads/writes fail.
+- Audit: authorised relevant staff can read scoped events; client attempts to forge or mutate events fail; trusted append path records actor, tenant, action and timestamp.
+- Service role: trusted server workflows work, while service credentials remain absent from browser bundles and client logs.
+- Defaults: newly created objects do not grant unnecessary client privileges.
+
+Do not treat a successful advisor run as a substitute for these role-based tests.
+
+### 19.5 Status
+
+This section records a proposed design based on live policy definitions. No GRANT, REVOKE, ALTER DEFAULT PRIVILEGES, RLS policy, function, trigger or schema change was executed. The proposal remains subject to product-owner review, implementation review and non-production validation.
