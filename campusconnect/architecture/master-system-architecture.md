@@ -380,3 +380,8 @@ This master document consolidates, but does not replace, the more detailed speci
 ## 18. Implementation boundary
 
 This document is a consolidated architecture proposal. It does not mean the described student, college, platform-admin, LMS, attendance, integration, billing or security workflows are implemented. The current website remains a front-end demonstration; only the account page has the previously documented Supabase Auth/profile integration. Do not enter real student personal information into demo workflows. No Supabase tables, policies, migrations, production roles, integrations or billing configuration were created or changed as part of this architecture work.
+
+
+## Expanded platform scope
+
+The seven-area product expansion and the inspection-based foundation gap assessment are consolidated in [Expanded Platform Architecture and Foundation Gap Assessment](expanded-platform-architecture-and-gap-assessment.md). That document extends this master architecture without replacing the existing college modes, academic structure, multi-group allocation, learning governance, attendance or tenant-isolation decisions.
