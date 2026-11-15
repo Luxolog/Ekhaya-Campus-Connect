@@ -269,6 +269,21 @@ Scope:
 
 The Partner Network is a relationship and service directory, not a consumer product-shopping marketplace. It must not introduce gadgets, retail catalogues or general product listings.
 
+
+### 3.9 Education bookshops and study-material partners
+
+CampusConnect should connect colleges and students with verified bookshops, campus bookstores, textbook suppliers, publishers and other approved education-material providers. This includes required college textbooks and prescribed reading lists, as well as study guides, past-paper resources and textbooks for learners preparing for matric rewrite / Amended Senior Certificate examinations.
+
+The experience should support:
+- College- and course-linked booklists, prescribed titles, editions, ISBNs and recommended reading.
+- Discovery of nearby or online bookshops and suppliers that can fulfil a booklist.
+- Availability, price indications, delivery/collection options and student discounts where providers supply current information.
+- Direct links, contact/referral or approved affiliate hand-off to the bookshop's own checkout or ordering channel.
+- Dedicated matric rewrite study-material discovery, clearly separated from college-specific prescribed textbooks.
+- Provider verification, listing ownership, update dates, referral attribution and complaint handling.
+
+**Commercial and product boundary:** this is an education-support partnership and referral capability within the Partner Network, not a CampusConnect retail marketplace. CampusConnect should not hold general retail stock, process bookshop orders or payments, or add unrelated consumer products. Start with free provider listings, bookshop-submitted information and direct links; consider affiliate arrangements only where agreed and transparent. Do not imply stock or pricing is live unless the provider supplies a verified update.
+
 ## 4. Shared architecture and data boundaries
 
 ### 4.1 Identity and tenant context
