@@ -339,3 +339,46 @@ Do not merge the PR to obtain the migrations. Do not rerun either migration mere
 ### 17.5 Current implementation boundary
 
 This review and the associated repository documentation are read-only with respect to Supabase. No database grants, default privileges, RLS policies, schema objects, migration records, Auth settings, Storage buckets, users or production data were changed. No PR was merged, rebased or closed.
+
+
+## 18. PR migration-source inspection — 15 November 2026
+
+A follow-up read of the exact SQL files on the PR #3 head (campusconnect-phase1-auth) was completed. This is repository-source inspection only; it does not establish that either file was deployed exactly as written.
+
+### 18.1 College registration request migration
+
+The PR branch contains supabase/migrations/20261115120448_college_registration_requests.sql. Its SQL:
+- Creates public.college_registration_requests if absent.
+- Defines bounded institution/contact fields, a South African province allow-list, portal-mode values (existing, full, hybrid), and request states (pending, under_review, approved, declined).
+- Adds reviewer and review timestamp fields, including reviewed_by referencing auth.users(id).
+- Enables RLS, revokes all table privileges from anon and authenticated, then grants INSERT to those roles.
+- Adds an INSERT policy requiring a pending, unreviewed request.
+- Creates indexes on (status, created_at DESC) and lower(contact_email).
+- Adds a table comment describing manual review and provisioning.
+
+This source aligns with the observed live table shape and intended public submission boundary at a high level. The live catalog inspection remains the authority for the currently deployed state; source-file presence is not proof of deployment provenance.
+
+### 18.2 Reviewer index migration
+
+The PR branch also contains supabase/migrations/20261115130000_college_registration_reviewed_by_idx.sql, whose complete statement is:
+
+```sql
+create index if not exists college_registration_requests_reviewed_by_idx
+  on public.college_registration_requests(reviewed_by);
+```
+
+The live catalog already contains this index, while the live migration ledger does not contain version 20261115130000. The statement's idempotent form does not resolve the provenance gap. Do not replay it or insert a migration-history record solely on the basis of this file.
+
+### 18.3 Repository-chain gap confirmed
+
+The exact paths supabase/migrations/20261115120143_auth_profile_bootstrap_and_consent_controls.sql and supabase/migrations/20261115120200_consolidate_consent_read_policy.sql were not found on the inspected PR branch. The expected migration paths were also not found on current main. The live ledger records those versions, but their source SQL is still not available in the inspected repository refs.
+
+This confirms a repository migration-chain completeness gap. It does not prove that the source never existed elsewhere, was deleted, or was not deployed from another location.
+
+### 18.4 Decision
+
+- Preserve the two PR migration files as evidence; do not merge the PR just to import them.
+- Keep the live ledger, live catalog and repository migration directory as three separate evidence sets until provenance is resolved.
+- Recover original migration source from the original authoring environment, CI/deployment artifacts, backups or another verified repository ref.
+- If source recovery fails, document the missing provenance and establish a reviewed forward baseline from the verified live schema. Do not fabricate historical SQL or retroactively claim a baseline is replayable.
+- No live database or PR state was changed by this inspection.
