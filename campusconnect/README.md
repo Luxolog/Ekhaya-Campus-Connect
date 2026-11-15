@@ -119,3 +119,8 @@ The existing Tshwane College public website remains the institutional website. C
 ## College administration workspace design
 
 The planned college administration workspace, navigation, tenant onboarding, admissions and academic workflows, role-based page/action matrix, integrations, reporting and acceptance criteria are documented in [College Administration Workspace Specification](architecture/college-administration-workspace.md). This is a design specification, not an implemented dashboard or database deployment.
+
+
+## Platform super admin workspace design
+
+The Ekhaya Technologies platform control plane, tenant onboarding/governance, platform roles, billing, usage, integrations, support access, security operations and acceptance criteria are documented in [Platform Super Admin Workspace Specification](architecture/platform-super-admin-workspace.md). This is an architecture proposal, not an implemented admin system or database deployment.
