@@ -2,9 +2,17 @@
 
 **Branch:** `campusconnect-december-mvp`  
 **Planning baseline:** `main` at `30626abd701d3bcd0c1626ae766cd016e33720f2`  
-**Delivery target:** 31 December 2026  
-**First checkpoint:** 30 November 2026  
+**Build standard:** launch-ready engineering from day one  
+**Build checkpoint:** 30 November 2026  
+**Holiday pilot target:** December 2026–January 2027  
+**Public introduction target:** early 2027, after pilot exit gates  
 **Status:** Working delivery plan; not a production deployment or a claim that listed modules are implemented.
+
+## Delivery posture — build as if launch is tomorrow
+
+Treat every workflow as production-intended from its first implementation: real authentication and authorisation, tenant isolation, privacy by design, validation, accessible responsive UI, failure handling, auditability and automated acceptance tests. Do not create throwaway demo logic for workflows intended for the pilot. Use synthetic data until the pilot environment and participant permissions are approved.
+
+The December/January holiday period is for a controlled pilot and fixing issues found in real use, not an excuse to expose unfinished features publicly. Early-2027 introduction happens only after the pilot exit gates, security review, operational readiness and product-owner sign-off. Vercel is optional; a secured, monitored non-production host is required for an actual pilot.
 
 ## 1. Release definition
 
@@ -78,7 +86,9 @@ These modules should use simple, auditable workflows and directory/referral patt
 | Opportunities and learning essentials | 13 Dec | Jobs, Holiday Jobs, Work Experience and LMS smoke tests |
 | Student services and partner directory | 17 Dec | Funding, wellness, bookshop and partner directory smoke tests |
 | Feature freeze | 20 Dec | Agreed MVP scope implemented; no new features without release-owner decision |
-| Release verification | 21–31 Dec | Security, functional, responsive, regression and operational checks signed off |
+| Holiday pilot preparation | 21–31 Dec | Security, functional, responsive, regression and operational checks; pilot environment and synthetic test accounts ready |
+| Controlled holiday pilot | Dec 2026–Jan 2027 | Invited testers complete agreed journeys; defects logged, prioritised and fixed |
+| Early-2027 introduction gate | After pilot | Security, privacy, operational and product-owner sign-off; no unresolved release-blocking defects |
 
 Dates are targets, not evidence of completion. Reforecast immediately if a gate fails.
 
