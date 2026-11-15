@@ -377,6 +377,17 @@ This master document consolidates, but does not replace, the more detailed speci
 - [College Administration Workspace Specification](college-administration-workspace.md)
 - [Platform Super Admin Workspace Specification](platform-super-admin-workspace.md)
 
+
+## Education bookshops and study-material partnerships
+
+The Partner Network should include verified bookshops, campus bookstores, textbook suppliers, publishers and approved education-material providers. This supports both:
+- College students finding prescribed textbooks, editions, ISBNs, course booklists and recommended reading.
+- Students preparing for matric rewrite / Amended Senior Certificate examinations finding relevant textbooks, study guides and past-paper resources.
+
+Provide provider discovery, booklist matching, provider-supplied availability and indicative pricing, collection/delivery details, student discounts where offered, and direct links or referral hand-off to the bookshop's own ordering channel. Keep matric rewrite resources discoverable as a dedicated category and do not mix them indiscriminately with college-specific prescribed reading lists.
+
+This is an education-support partner directory/referral capability, not a retail marketplace. Start with free bookshop listings and direct links. Any affiliate referral arrangement must be agreed and transparent. CampusConnect does not own bookshop stock or operate a general retail checkout. Availability and prices must be labelled with their provider update date and must not be presented as live without verified data.
+
 ## 18. Implementation boundary
 
 This document is a consolidated architecture proposal. It does not mean the described student, college, platform-admin, LMS, attendance, integration, billing or security workflows are implemented. The current website remains a front-end demonstration; only the account page has the previously documented Supabase Auth/profile integration. Do not enter real student personal information into demo workflows. No Supabase tables, policies, migrations, production roles, integrations or billing configuration were created or changed as part of this architecture work.
