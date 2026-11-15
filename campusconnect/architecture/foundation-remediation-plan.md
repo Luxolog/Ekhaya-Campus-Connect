@@ -289,3 +289,53 @@ The following are product/governance decisions, not matters to guess in SQL:
 ## 16. Immediate next action
 
 Complete Phase 0 as a read-only evidence-gathering exercise, then produce a migration reconciliation report and a final tenant/role decision record. Only after those are reviewed should a separate implementation proposal be prepared for approval. This document itself performs no schema or production action.
+
+
+## 17. PR #3 reconciliation review — 15 November 2026
+
+A fresh comparison was performed against the then-current `main` branch and live Supabase catalog.
+
+### 17.1 Branch status
+
+PR #3 (`campusconnect-phase1-auth`) remains open and unmerged. At the comparison point:
+- PR head: `38b6552f1100e82fad00a9ab0765d4aded0416b7`.
+- Main head: `b3c0bb3ca72b075c4c43bb1ff4a66aeb68c49a7a`.
+- Branch comparison: 7 commits ahead, 34 commits behind, status `diverged`.
+- Changed paths: `campusconnect/README.md`, `campusconnect/account.html`, `campusconnect/index.html`, and two migration files.
+
+The PR's README is stale relative to current main: it points to an older GitHub Pages project path, describes account access as absent from the prototype, and omits the architecture and governance documentation added to main. It must not replace the current README.
+
+### 17.2 Frontend findings
+
+The current main branch already contains:
+- A student account page at `campusconnect/account.html` with signup, sign-in, password reset, profile editing and sign-out.
+- A navigation link to that account page from `campusconnect/index.html`.
+
+The PR branch's account page is a different, older implementation and should not overwrite the current main version. The PR's index navigation addition is already present on main in a different location/style. Therefore, those two changes are superseded rather than candidates for blind cherry-picking.
+
+The current main account page reads and writes fields that were confirmed in the live `student_profiles` table: `first_name`, `last_name`, `email`, `phone`, `province`, `city`, and `highest_qualification`. This is a schema compatibility check only; hosted Auth redirect, SMTP, signup, verification, recovery and profile-write flows have not yet been end-to-end tested.
+
+The PR account page also contains the college registration request form. The corresponding table exists live and its public policy is INSERT-only with server-enforced pending/unreviewed fields. That useful form capability should be separately ported into the current main account experience only after a focused review and test plan. Do not replace the better current student account implementation with the older PR page.
+
+### 17.3 Migration findings
+
+- `20261115120448_college_registration_requests.sql` is recorded in the live migration ledger and the resulting table/policy/indexes exist. The source file is useful evidence, but it must be incorporated into a canonical repository migration chain only after the missing earlier migrations are recovered.
+- `20261115130000_college_registration_reviewed_by_idx.sql` is present on the PR branch, and the index exists in the live database, but migration version `20261115130000` is absent from the live migration ledger.
+- The first two live migration versions (`20261115120143` and `20261115120200`) are not present in the PR branch's migration directory. Their exact SQL and provenance remain unverified.
+- The live database has broad direct grants and broad public-schema default privileges, as documented in the live baseline audit. The PR migration does not remediate those grants or defaults.
+
+Do not merge the PR to obtain the migrations. Do not rerun either migration merely because its file is present in Git. Do not manually insert a migration ledger row for the index until deployment provenance and canonical migration workflow are established.
+
+### 17.4 Recommended disposition
+
+1. Keep PR #3 open and unmerged while its useful college-request form and migration evidence are retained.
+2. Do not rebase the seven-commit branch directly onto main. It has diverged materially and contains stale documentation/frontend changes.
+3. Use current main as the source of truth for the student account page and navigation.
+4. Recover the exact source/deployment evidence for the first two recorded migrations. If the original SQL cannot be recovered, explicitly document that gap and establish a reviewed baseline strategy from the verified live schema; do not fabricate historical migrations.
+5. Port only the college registration form capability into the current main account page in a clean, separately reviewed branch. Keep it limited to INSERT-only submission; review spam/rate limiting, input validation, privacy notice and abuse monitoring before public promotion.
+6. Prepare a dedicated migration reconciliation change set after the baseline and provenance review. It must not mix UI changes with migration-ledger repair.
+7. Once replacement work is reviewed and any useful changes are preserved, close the stale PR with a clear superseded explanation. Until then, leave its state unchanged.
+
+### 17.5 Current implementation boundary
+
+This review and the associated repository documentation are read-only with respect to Supabase. No database grants, default privileges, RLS policies, schema objects, migration records, Auth settings, Storage buckets, users or production data were changed. No PR was merged, rebased or closed.
