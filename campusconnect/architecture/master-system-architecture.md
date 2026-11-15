@@ -385,3 +385,7 @@ This document is a consolidated architecture proposal. It does not mean the desc
 ## Expanded platform scope
 
 The seven-area product expansion and the inspection-based foundation gap assessment are consolidated in [Expanded Platform Architecture and Foundation Gap Assessment](expanded-platform-architecture-and-gap-assessment.md). That document extends this master architecture without replacing the existing college modes, academic structure, multi-group allocation, learning governance, attendance or tenant-isolation decisions.
+
+## Foundation remediation plan
+
+The implementation gates and target-state remediation details for the live foundation are set out in [CampusConnect Foundation Remediation Plan](foundation-remediation-plan.md). It is subordinate to this architecture and does not replace the existing domain specifications. No database or production changes are authorised by the plan.
