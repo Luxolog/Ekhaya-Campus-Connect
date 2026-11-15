@@ -114,3 +114,8 @@ Indicative proposals only:
 ## Brand
 
 The existing Tshwane College public website remains the institutional website. CampusConnect is presented as the platform layer, powered by Ekhaya Technologies. Official college branding, programme data and admissions rules must be approved by Tshwane College before public production use.
+
+
+## College administration workspace design
+
+The planned college administration workspace, navigation, tenant onboarding, admissions and academic workflows, role-based page/action matrix, integrations, reporting and acceptance criteria are documented in [College Administration Workspace Specification](architecture/college-administration-workspace.md). This is a design specification, not an implemented dashboard or database deployment.
