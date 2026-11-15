@@ -108,3 +108,15 @@ Indicative proposals only:
 ## Brand
 
 The existing Tshwane College public website remains the institutional website. CampusConnect is presented as the platform layer, powered by Ekhaya Technologies. Official college branding, programme data and admissions rules must be approved by Tshwane College before public production use.
+
+
+## Phase 1 account onboarding (implementation)
+
+- Student registration uses Supabase Auth email/password. Email confirmation is required before password sign-in (hosted Supabase default; verify in Auth settings).
+- Student profile rows are created by the existing Auth signup trigger. Students can read and update only their own profile; institution access remains consent-controlled by RLS.
+- Colleges submit a public onboarding request at `account.html`. The request is inserted with a server-enforced `pending` status and is not readable by public or authenticated clients.
+- Ekhaya reviews requests in the Supabase dashboard. Approval and college user provisioning are intentionally manual in Phase 1; a submitted request never creates a college, membership or login automatically.
+- Configure the Supabase Auth Site URL and allowed redirect URL to include the exact GitHub Pages account page URL before testing email confirmation and password reset.
+- The public publishable key is used in the browser. No service-role or secret key is included in frontend files.
+
+The original prototype dashboards still contain localStorage demo data and must not be used for real admissions operations until those workflows are migrated to authenticated, tenant-scoped database queries.
