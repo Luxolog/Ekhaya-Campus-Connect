@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="CampusConnect student account access — register, sign in and manage your student profile.">
+<title>Student Account | CampusConnect</title>
+<style>
+:root{--navy:#14233b;--blue:#2458a6;--lime:#9bd84b;--ink:#172033;--muted:#687386;--line:#e4e9f0;--bg:#f4f7fb;--white:#fff;--danger:#a52828;--success:#176b43}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--blue);text-decoration:none}.top{background:var(--navy);color:white;padding:18px 22px}.top-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px;color:white}.mark{width:38px;height:38px;border-radius:12px;background:var(--lime);color:var(--navy);display:grid;place-items:center;font-weight:900;font-size:22px}.brand strong{display:block;font-size:17px}.brand small{display:block;color:#cbd5e1;font-size:11px}.back{color:#eaf2ff;font-weight:650}
+main{max-width:1100px;margin:38px auto;padding:0 20px 50px}.intro{margin-bottom:22px}.eyebrow{color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.14em}.intro h1{font-size:clamp(28px,4vw,40px);line-height:1.12;margin:8px 0}.intro p{color:var(--muted);max-width:680px;margin:0}
+.layout{display:grid;grid-template-columns: minmax(0,1.15fr) minmax(300px,.85fr);gap:20px;align-items:start}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 12px 35px #1720330a}.tabs{display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px}.tab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 13px;font-weight:700;color:var(--muted);cursor:pointer}.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+h2{font-size:21px;margin:0 0 5px}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:750;color:#344054}input,select{width:100%;border:1px solid #d6dde7;border-radius:9px;padding:12px 13px;font:inherit;background:white;color:var(--ink)}input:focus,select:focus{outline:3px solid #2458a61c;border-color:var(--blue)}.btn{border:0;border-radius:10px;background:var(--blue);color:white;font-weight:750;padding:12px 17px;cursor:pointer;font:inherit}.btn.secondary{background:#edf2f8;color:var(--navy)}.btn.danger{background:#fff0f0;color:var(--danger)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.hidden{display:none!important}.notice{border-radius:10px;padding:12px 14px;background:#f0f5fb;color:#40516a;font-size:13px;margin:14px 0}.message{display:none;padding:12px 14px;border-radius:10px;margin:14px 0;font-size:13px}.message.show{display:block}.message.error{background:#fff0f0;color:var(--danger)}.message.success{background:#eaf8f0;color:var(--success)}.profile-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.pill{background:#eef7e6;color:#426d1c;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800}.side{background:var(--navy);color:white;border-radius:18px;padding:25px}.side h2{font-size:22px}.side p,.side li{color:#d5deeb;font-size:13px}.side ul{padding-left:18px}.side .notice{background:#ffffff12;color:#e3eaf4}.fine{font-size:11px;color:var(--muted);margin-top:18px}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
+@media(max-width:760px){main{margin-top:25px}.layout{grid-template-columns:1fr}.side{order:2}.card{padding:19px}}@media(max-width:480px){.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.top-inner{align-items:flex-start}.back{font-size:12px}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
+</head>
+<body>
+<header class="top"><div class="top-inner"><a class="brand" href="./index.html"><span class="mark">C</span><span><strong>CampusConnect</strong><small>Powered by Ekhaya Technologies</small></span></a><a class="back" href="./index.html">← Back to CampusConnect</a></div></header>
+<main>
+<div class="intro"><div class="eyebrow">STUDENT PORTAL</div><h1>Your journey starts here.</h1><p>Create your secure student account, sign in to manage your profile, and keep your application information up to date.</p></div>
+<div class="layout">
+<section class="card">
+<div id="authMessage" class="message" role="status" aria-live="polite"></div>
+<div id="authArea">
+<div class="tabs" role="tablist" aria-label="Account actions">
+<button class="tab active" data-panel="signup" type="button">Create account</button>
+<button class="tab" data-panel="signin" type="button">Sign in</button>
+<button class="tab" data-panel="reset" type="button">Forgot password</button>
+</div>
+<form id="signupForm" class="auth-panel">
+<h2>Create your student account</h2><p class="sub">Use an email address you can access. We will send a verification link.</p>
+<div class="form-grid">
+<div class="field"><label for="firstName">First name *</label><input id="firstName" autocomplete="given-name" required maxlength="80"></div>
+<div class="field"><label for="lastName">Last name *</label><input id="lastName" autocomplete="family-name" required maxlength="80"></div>
+<div class="field full"><label for="signupEmail">Email address *</label><input id="signupEmail" type="email" autocomplete="email" required maxlength="254"></div>
+<div class="field"><label for="signupPassword">Password *</label><input id="signupPassword" type="password" autocomplete="new-password" minlength="10" required></div>
+<div class="field"><label for="confirmPassword">Confirm password *</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="10" required></div>
+</div>
+<div class="notice">Use at least 10 characters. Keep your password private. Email verification may be required before you can sign in.</div>
+<div class="actions"><button class="btn" type="submit">Create account</button></div>
+</form>
+<form id="signinForm" class="auth-panel hidden">
+<h2>Welcome back</h2><p class="sub">Sign in to view and update your student profile.</p>
+<div class="field"><label for="signinEmail">Email address *</label><input id="signinEmail" type="email" autocomplete="email" required></div>
+<div class="field" style="margin-top:13px"><label for="signinPassword">Password *</label><input id="signinPassword" type="password" autocomplete="current-password" required></div>
+<div class="actions"><button class="btn" type="submit">Sign in</button></div>
+</form>
+<form id="resetForm" class="auth-panel hidden">
+<h2>Reset your password</h2><p class="sub">Enter your account email and we will send a reset link if an account is registered.</p>
+<div class="field"><label for="resetEmail">Email address *</label><input id="resetEmail" type="email" autocomplete="email" required></div>
+<div class="actions"><button class="btn" type="submit">Send reset link</button></div>
+</form>
+</div>
+<section id="profileArea" class="hidden">
+<div class="profile-head"><div><div class="eyebrow">MY ACCOUNT</div><h2>Student profile</h2><p class="sub" id="signedInEmail"></p></div><span class="pill">Signed in</span></div>
+<form id="profileForm">
+<div class="form-grid">
+<div class="field"><label for="profileFirst">First name</label><input id="profileFirst" maxlength="80" required></div>
+<div class="field"><label for="profileLast">Last name</label><input id="profileLast" maxlength="80" required></div>
+<div class="field full"><label for="profilePhone">Cellphone number</label><input id="profilePhone" type="tel" autocomplete="tel" maxlength="30" placeholder="+27…"></div>
+<div class="field"><label for="profileProvince">Province</label><select id="profileProvince"><option value="">Select province</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>North West</option><option>Northern Cape</option><option>Western Cape</option></select></div>
+<div class="field"><label for="profileCity">City / Town</label><input id="profileCity" maxlength="100"></div>
+<div class="field full"><label for="profileQualification">Highest qualification</label><select id="profileQualification"><option value="">Select qualification</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12 / Matric</option><option>NATED / NCV</option><option>Certificate / Diploma</option><option>Degree</option><option>Other</option></select></div>
+</div>
+<div class="actions"><button class="btn" type="submit">Save profile</button><button class="btn secondary" id="signoutButton" type="button">Sign out</button></div>
+</form>
+</section>
+<section id="passwordArea" class="hidden">
+<h2>Choose a new password</h2><p class="sub">Your reset link has been accepted. Set a new password below.</p>
+<form id="newPasswordForm"><div class="field"><label for="newPassword">New password *</label><input id="newPassword" type="password" minlength="10" autocomplete="new-password" required></div><div class="actions"><button class="btn" type="submit">Update password</button></div></form>
+</section>
+<p class="fine">Only enter information that is necessary for your student profile. CampusConnect will share profile information with an institution only through the platform's consent-based application process.</p>
+</section>
+<aside class="side"><div class="eyebrow" style="color:#b6e77d">CAMPUSCONNECT</div><h2>One profile. More paths to your future.</h2><p>Manage your details in one place and use them as you explore study opportunities.</p><ul><li>Secure email and password access</li><li>Update your contact and education details</li><li>Recover access if you forget your password</li><li>Keep your profile ready for future applications</li></ul><div class="notice">Account access is now connected to Supabase Auth. Application submission, college sharing and student document workflows will be added and tested separately.</div></aside>
+</div>
+<div class="footer">CampusConnect · Powered by Ekhaya Technologies</div>
+</main>
+<script>
+(() => {
+  const SUPABASE_URL = "https://owaiysaotqxtqfystigc.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_LRXwZGWk4kBad9zpqTIrWA_5dPqvXZB";
+  const ACCOUNT_URL = window.location.origin + window.location.pathname;
+  const { createClient } = window.supabase;
+  const client = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const $ = (id) => document.getElementById(id);
+  let currentUser = null;
+  const message = (text, type = "success") => {
+    const el = $("authMessage");
+    el.textContent = text;
+    el.className = "message show " + type;
+  };
+  const clearMessage = () => { $("authMessage").className = "message"; $("authMessage").textContent = ""; };
+  const showPanel = (name) => {
+    document.querySelectorAll(".auth-panel").forEach(el => el.classList.toggle("hidden", el.id !== name + "Form"));
+    document.querySelectorAll(".tab").forEach(el => el.classList.toggle("active", el.dataset.panel === name));
+    clearMessage();
+  };
+  document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", () => showPanel(btn.dataset.panel)));
+  const showSignedOut = () => {
+    $("authArea").classList.remove("hidden");
+    $("profileArea").classList.add("hidden");
+    $("passwordArea").classList.add("hidden");
+  };
+  const showSignedIn = () => {
+    $("authArea").classList.add("hidden");
+    $("profileArea").classList.remove("hidden");
+    $("passwordArea").classList.add("hidden");
+  };
+  async function loadProfile(user) {
+    currentUser = user;
+    $("signedInEmail").textContent = user.email || "";
+    const { data, error } = await client.from("student_profiles")
+      .select("first_name,last_name,email,phone,province,city,highest_qualification")
+      .eq("user_id", user.id).maybeSingle();
+    if (error) {
+      message("You are signed in, but your profile could not be loaded. " + error.message, "error");
+      return;
+    }
+    $("profileFirst").value = data?.first_name || user.user_metadata?.first_name || "";
+    $("profileLast").value = data?.last_name || user.user_metadata?.last_name || "";
+    $("profilePhone").value = data?.phone || "";
+    $("profileProvince").value = data?.province || "";
+    $("profileCity").value = data?.city || "";
+    $("profileQualification").value = data?.highest_qualification || "";
+    if (!data) message("Your account is active. Complete your profile and save it.", "success");
+  }
+  $("signupForm").addEventListener("submit", async (event) => {
+    event.preventDefault(); clearMessage();
+    const first = $("firstName").value.trim(), last = $("lastName").value.trim();
+    const email = $("signupEmail").value.trim().toLowerCase();
+    const password = $("signupPassword").value, confirm = $("confirmPassword").value;
+    if (password !== confirm) return message("The passwords do not match.", "error");
+    if (password.length < 10) return message("Choose a password with at least 10 characters.", "error");
+    const { data, error } = await client.auth.signUp({
+      email, password,
+      options: { emailRedirectTo: ACCOUNT_URL, data: { first_name: first, last_name: last } }
+    });
+    if (error) return message(error.message, "error");
+    if (data.session && data.user) {
+      await loadProfile(data.user);
+      showSignedIn();
+      message("Your account has been created and you are signed in.", "success");
+    } else {
+      message("Registration received. Check your email and click the verification link before signing in. If the email does not arrive, check spam or contact the platform administrator.", "success");
+      $("signupForm").reset();
+    }
+  });
+  $("signinForm").addEventListener("submit", async (event) => {
+    event.preventDefault(); clearMessage();
+    const { data, error } = await client.auth.signInWithPassword({
+      email: $("signinEmail").value.trim().toLowerCase(),
+      password: $("signinPassword").value
+    });
+    if (error) return message(error.message, "error");
+    await loadProfile(data.user);
+    showSignedIn();
+    message("You are signed in.", "success");
+  });
+  $("resetForm").addEventListener("submit", async (event) => {
+    event.preventDefault(); clearMessage();
+    const { error } = await client.auth.resetPasswordForEmail($("resetEmail").value.trim().toLowerCase(), { redirectTo: ACCOUNT_URL });
+    if (error) return message(error.message, "error");
+    message("If an account exists for that email address, a password reset link will be sent.", "success");
+    $("resetForm").reset();
+  });
+  $("profileForm").addEventListener("submit", async (event) => {
+    event.preventDefault(); clearMessage();
+    if (!currentUser) return message("Please sign in again.", "error");
+    const first = $("profileFirst").value.trim(), last = $("profileLast").value.trim();
+    const profile = {
+      user_id: currentUser.id, first_name: first, last_name: last,
+      email: currentUser.email, phone: $("profilePhone").value.trim() || null,
+      province: $("profileProvince").value || null, city: $("profileCity").value.trim() || null,
+      highest_qualification: $("profileQualification").value || null
+    };
+    const { error } = await client.from("student_profiles").upsert(profile, { onConflict: "user_id" });
+    if (error) return message("Profile could not be saved. " + error.message, "error");
+    const { error: metaError } = await client.auth.updateUser({ data: { first_name: first, last_name: last } });
+    if (metaError) return message("Profile saved, but account name metadata could not be updated: " + metaError.message, "error");
+    message("Your student profile has been saved.", "success");
+  });
+  $("signoutButton").addEventListener("click", async () => {
+    const { error } = await client.auth.signOut();
+    if (error) return message(error.message, "error");
+    currentUser = null; showSignedOut(); showPanel("signin"); message("You have signed out.", "success");
+  });
+  $("newPasswordForm").addEventListener("submit", async (event) => {
+    event.preventDefault(); clearMessage();
+    const password = $("newPassword").value;
+    if (password.length < 10) return message("Choose a password with at least 10 characters.", "error");
+    const { error } = await client.auth.updateUser({ password });
+    if (error) return message(error.message, "error");
+    $("newPasswordForm").reset();
+    message("Your password has been updated. You can continue using your account.", "success");
+    const { data } = await client.auth.getUser();
+    if (data.user) { await loadProfile(data.user); showSignedIn(); }
+  });
+  client.auth.onAuthStateChange((event, session) => {
+    if (event === "PASSWORD_RECOVERY") {
+      $("authArea").classList.add("hidden");
+      $("profileArea").classList.add("hidden");
+      $("passwordArea").classList.remove("hidden");
+      message("Password recovery verified. Choose a new password.", "success");
+    }
+    if (event === "SIGNED_OUT") { currentUser = null; showSignedOut(); }
+  });
+  (async () => {
+    const { data: { session } } = await client.auth.getSession();
+    if (session?.user) { await loadProfile(session.user); showSignedIn(); }
+    else showSignedOut();
+    if (window.location.hash.includes("error")) message("The email link could not be completed. Request a fresh link and try again.", "error");
+  })();
+})();
+</script>
+</body>
+</html>
