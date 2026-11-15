@@ -1,14 +1,13 @@
 -- CAMPUSCONNECT ACADEMIC STRUCTURE SCHEMA DRAFT
 -- DESIGN ONLY. DO NOT RUN AGAINST A LIVE DATABASE.
--- This draft intentionally omits final RLS policies and production grants.
+-- No final RLS policies or production grants are included.
 -- Reconcile live schema/migration baseline and approve role model first.
 
--- PRE-REQUISITES TO RESOLVE:
+-- PRE-REQUISITES:
 -- 1. courses needs UNIQUE(college_id,id) before tenant-safe composite FK.
 -- 2. college_memberships.role CHECK must be deliberately expanded.
--- 3. Decide if offerings span multiple campuses and if students can join
---    multiple class groups per offering.
--- 4. Decide enrolment lifecycle and application-to-registration workflow.
+-- 3. Decide whether offerings span multiple campuses.
+-- 4. Confirm enrolment lifecycle and application-to-registration workflow.
 
 CREATE TABLE public.campuses (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -83,9 +82,6 @@ CREATE TABLE public.course_enrolments (
   FOREIGN KEY (college_id, course_offering_id) REFERENCES public.course_offerings(college_id, id),
   CHECK (ends_on IS NULL OR starts_on IS NULL OR ends_on >= starts_on)
 );
--- Student number uniqueness should be per college if confirmed:
--- CREATE UNIQUE INDEX ... ON public.course_enrolments(college_id, student_number)
--- WHERE student_number IS NOT NULL;
 
 CREATE TABLE public.class_groups (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -97,8 +93,36 @@ CREATE TABLE public.class_groups (
   created_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (college_id, code),
   UNIQUE (college_id, id),
+  UNIQUE (college_id, id, course_offering_id),
   FOREIGN KEY (college_id, course_offering_id) REFERENCES public.course_offerings(college_id, id)
 );
+
+-- Many-to-many: one course enrolment may belong to several groups in the same
+-- offering (e.g. lecture group A and tutorial group C).
+CREATE TABLE public.class_group_enrolments (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  college_id uuid NOT NULL REFERENCES public.colleges(id),
+  course_offering_id uuid NOT NULL,
+  class_group_id uuid NOT NULL,
+  course_enrolment_id uuid NOT NULL,
+  status text NOT NULL DEFAULT 'active' CHECK (status IN ('active','ended','revoked')),
+  assigned_at timestamptz NOT NULL DEFAULT now(),
+  assigned_by uuid REFERENCES auth.users(id),
+  starts_on date,
+  ends_on date,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (college_id, id),
+  UNIQUE (college_id, class_group_id, course_enrolment_id),
+  FOREIGN KEY (college_id, class_group_id, course_offering_id)
+    REFERENCES public.class_groups(college_id, id, course_offering_id),
+  FOREIGN KEY (college_id, course_enrolment_id)
+    REFERENCES public.course_enrolments(college_id, id),
+  CHECK (ends_on IS NULL OR starts_on IS NULL OR ends_on >= starts_on)
+);
+-- A trigger/constraint validation is still required to ensure the referenced
+-- course_enrolment.course_offering_id equals this row's course_offering_id.
+-- For a fully declarative guarantee, add UNIQUE(college_id,id,course_offering_id)
+-- to course_enrolments and use a 3-column composite FK.
 
 CREATE TABLE public.class_group_staff (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -136,25 +160,19 @@ CREATE TABLE public.class_sessions (
   CHECK (attendance_closes_at IS NULL OR attendance_opens_at IS NULL OR attendance_closes_at >= attendance_opens_at)
 );
 
--- OPTIONAL alternative if students may belong to multiple groups within one
--- offering: create class_group_enrolments(college_id, class_group_id,
--- course_enrolment_id, status, assigned_at) with composite tenant FKs.
--- Do not create this table if one group_id on course_enrolments is sufficient.
-
 -- ROLE MODEL CHANGE (NOT EXECUTED):
 -- Review college_memberships.role CHECK to add lecturer, teaching_assistant,
--- attendance_officer and student_support. A membership can then be assigned
--- to class groups through class_group_staff. Keep college_admin, admissions_staff
--- and registrar. Never permit public self-assignment of privileged roles.
+-- attendance_officer and student_support. Never allow public self-assignment.
 
 -- SECURITY REQUIREMENTS BEFORE DEPLOYMENT:
--- * Enable RLS on every new table.
--- * Staff policies must verify active membership for same college.
--- * Lecturer/assistant policies must additionally verify current assignment.
--- * Student policies must resolve ownership through course_enrolments.
--- * No broad college-wide student access for lecturers by default.
+-- * Enable RLS on every new public table.
+-- * Staff policies verify active membership for same college.
+-- * Lecturer/assistant policies additionally verify current class_group_staff.
+-- * Student policies resolve own access through course_enrolments and
+--   class_group_enrolments (auth.uid() = student_user_id).
+-- * A lecturer sees only assigned groups; a student sees only own groups.
+-- * No anon writes to academic structures.
 -- * UPDATE policies require SELECT visibility plus USING and WITH CHECK.
--- * No anon writes to academic structure.
--- * Add indexes for tenant keys and demonstrated query paths.
--- * Validate parent ownership with composite foreign keys.
--- * Add audit events for staff assignments, enrolment transitions and term changes.
+-- * Use composite tenant FKs; verify group and enrolment share same offering.
+-- * Add indexes for college_id and common join/filter columns after query review.
+-- * Audit enrolment transitions, group allocations, staff assignments and corrections.
