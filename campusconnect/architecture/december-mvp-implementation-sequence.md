@@ -16,7 +16,7 @@ The December/January holiday period is for a controlled pilot and fixing issues 
 
 ## 1. Release definition
 
-The December release is a tested first operational version of the agreed CampusConnect platform. It is not the completion of every advanced feature in the long-term architecture.
+The first operational release is the Stage 1 Admissions MVP: a tested student-to-college application and admissions workflow. It is not the completion of every module in the long-term CampusConnect platform.
 
 A module is not "done" because a page exists. It is done only when its primary user workflow, permissions, failure states and acceptance tests work.
 
@@ -37,7 +37,7 @@ A module is not "done" because a page exists. It is done only when its primary u
 
 **Exit gate:** reproducible baseline; approved privilege matrix; passing cross-tenant allow/deny tests; no privileged secret in client code.
 
-### Track B — Student and college onboarding (P1)
+### Track B — Student and college onboarding (P1; Stage 1 product core)
 
 1. Verify Supabase Auth site URL and redirect allow-list in a controlled environment.
 2. End-to-end test student signup, email verification, sign-in, password recovery, profile read/update and sign-out.
@@ -48,7 +48,7 @@ A module is not "done" because a page exists. It is done only when its primary u
 
 **Exit gate:** synthetic student can complete account lifecycle; prospective college can submit a request; only authorised reviewer can process it; no client can assign privileged roles.
 
-### Track C — First end-to-end college workflow (P2)
+### Track C — First end-to-end college workflow (P2; Stage 1 product core)
 
 1. Approved college administrator can access only their tenant.
 2. College can maintain its own profile and course catalogue.
@@ -61,20 +61,64 @@ A module is not "done" because a page exists. It is done only when its primary u
 
 **Exit gate:** the full college-to-student application journey passes using two colleges and two students, including negative cross-tenant tests.
 
-## 3. Remaining MVP modules — controlled scope
+## 3. Staged product roadmap — launch the admissions product first
 
-These modules should use simple, auditable workflows and directory/referral patterns where full integrations are unavailable.
+### Stage 1 — Admissions MVP (first operational release)
 
-| Module | December MVP scope | Defer from first release |
-|---|---|---|
-| Learning Management | Course spaces, learning resources, basic learner access and progress record | Complex assessments, proctoring, advanced analytics and video infrastructure |
-| Jobs | Opportunity listings, filters, student applications/referral links | Employer ATS integrations unless an approved API is available |
-| Holiday Jobs | Dedicated Jobs section/category with clear seasonal tagging and closing dates | Automated employer payroll or placement systems |
-| Work Experience | Separate listings for internships, apprenticeships, learnerships, WIL and job shadowing | Automated placement contracts and external HR integrations |
-| Funding | Bursary, sponsorship and loan information with eligibility details and official application/referral links | Credit scoring, underwriting, loan origination or debt collection |
-| Wellness | Referral directory and sponsored counselling referral workflow with minimal data | Storing diagnoses, clinical notes or therapy records |
-| Bookshops and study materials | College booklists, prescribed textbooks, matric rewrite/ASC books, study guides and past papers; direct links to bookshops | CampusConnect stock, checkout or payments |
-| Partner Network | Provider/service directory and integration catalogue for seller/student support partners | Consumer marketplace or unapproved deep integrations |
+The first release must deliver one complete student-to-college admissions journey for one authorised pilot college, with the architecture supporting additional colleges after tenant-isolation tests pass.
+
+**Student experience**
+- Register, verify email, sign in and manage a minimal student profile.
+- Browse only approved/published college and course information, including intake, entry requirements and application deadlines where supplied by the college.
+- Complete and submit an application to a selected college.
+- View their own application and its current status.
+- Receive clear next-step instructions when more information is required or an offer/decision is recorded.
+
+**College experience**
+- Authorised college staff sign in and see only their college's records.
+- Maintain the college profile and published course/intake catalogue.
+- Receive, search, filter and review applications.
+- Record a controlled set of statuses: received, under review, information required, accepted, declined and withdrawn.
+- Record decision notes and registration instructions with appropriate access controls.
+- View a simple admissions pipeline and export only records they are authorised to access.
+
+**Platform operations**
+- Review and approve college onboarding requests; no public self-provisioning or self-assigned roles.
+- Manage college membership and staff roles through a trusted administrative process.
+- Maintain audit events for access-sensitive and decision-related actions.
+- Provide tested email notifications for submission and status changes; if email delivery is not ready, show in-app status and a clear manual follow-up path.
+- Support an authorised manual hand-off/export for a college that has its own official admissions portal. Do not claim an integration unless an approved API has been implemented and tested.
+
+**Stage 1 exclusions**
+- No automated admission decisions; colleges retain decision authority.
+- No payment collection, fee reconciliation, student finance or subscription billing requirement for the initial pilot.
+- No broad LMS, attendance hardware, complex document vault, automated messaging channels, external ATS/HR integrations or deep student-information-system integrations.
+- Do not collect ID numbers, sensitive health data or confidential documents unless a separately reviewed and tested requirement makes them essential. Secure document upload/storage is a later stage.
+- Do not treat sample institutions or courses as real; pilot catalogue data requires institutional approval.
+
+**Stage 1 exit gate:** a student can register, find an approved course, submit an application, track it, and receive an outcome/next step; authorised college staff can process it; two-tenant positive and negative access tests pass; audit, privacy, backup and operational checks are signed off.
+
+### Stage 2 — Admissions expansion
+
+- Onboard additional colleges using the proven tenant model.
+- Add secure document upload, document requirements, protected storage, retention and deletion workflows after security review.
+- Add appointments, campus visit booking, queue management and richer admissions reporting.
+- Add approved integrations with existing college portals/SIS platforms, with a manual hand-off fallback.
+
+### Stage 3 — Student opportunity services
+
+- Jobs, including a dedicated Holiday Jobs section.
+- Work Experience: internships, apprenticeships, learnerships, WIL and job shadowing.
+- Funding directory: bursaries, sponsorships and loans with official application links.
+- Bookshops and study materials: college booklists, prescribed textbooks, matric rewrite/ASC resources, study guides and past papers, using direct bookshop links.
+
+### Stage 4 — Learning and student support
+
+- Learning Management essentials: course spaces, resources and basic learner progress.
+- Wellness referral directory and sponsored counselling referrals, with minimal data collection and no clinical notes or diagnoses stored.
+- Expanded Partner Network and approved integrations.
+
+These stages are product sequencing, not promises that every module will be ready for the first holiday pilot. Each stage needs its own scope, acceptance tests and release approval.
 
 ## 4. December delivery gates
 
