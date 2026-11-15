@@ -124,3 +124,8 @@ The planned college administration workspace, navigation, tenant onboarding, adm
 ## Platform super admin workspace design
 
 The Ekhaya Technologies platform control plane, tenant onboarding/governance, platform roles, billing, usage, integrations, support access, security operations and acceptance criteria are documented in [Platform Super Admin Workspace Specification](architecture/platform-super-admin-workspace.md). This is an architecture proposal, not an implemented admin system or database deployment.
+
+
+## Master system architecture
+
+The consolidated system architecture, tenant and trust boundaries, student lifecycle, academic and learning domains, attendance hardware gateway, college and platform workspaces, integrations, privacy/security model, migration readiness and phased roadmap are documented in [CampusConnect Master System Architecture](architecture/master-system-architecture.md). This is a design proposal only; no database changes or production feature deployments are included.
