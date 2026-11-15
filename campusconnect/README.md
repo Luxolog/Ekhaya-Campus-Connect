@@ -139,3 +139,7 @@ The dependency-ordered execution plan, workstreams, phase tasks, exit criteria, 
 ## Expanded platform architecture and foundation gap assessment
 
 The expanded seven-area CampusConnect platform scope—College Management, Learning Management, Jobs (including dedicated Holiday Jobs), Work Experience, Student Funding, Student Wellness, and Partner Network/Integrations—plus the live GitHub/Supabase inspection findings, missing foundations, privacy boundaries and recommended delivery sequence are documented in [Expanded Platform Architecture and Foundation Gap Assessment](architecture/expanded-platform-architecture-and-gap-assessment.md). This is documentation only; no application, database or production configuration changes were made.
+
+## Foundation remediation plan
+
+The controlled, dependency-ordered remediation plan for migration reconciliation, organisation and tenant boundaries, membership and capability authorisation, table-level RLS/grants, tenant-safe constraints, consent, private storage, audit, security tests and release gates is documented in [CampusConnect Foundation Remediation Plan](architecture/foundation-remediation-plan.md). This is a proposed plan only; it does not authorise or perform database or production changes.
