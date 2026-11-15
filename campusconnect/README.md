@@ -1,4 +1,4 @@
-# CampusConnect — Tshwane College Pilot
+# CampusConnect — Ekhaya Technologies
 
 **Powered by Ekhaya Technologies**
 
@@ -8,7 +8,7 @@ CampusConnect is a student recruitment, course discovery, application tracking a
 
 Serve this folder as a static site and open `index.html`. The demo is also reachable from the repository's GitHub Pages deployment at:
 
-`https://luxolog.github.io/tshwane-college-website/campusconnect/`
+`https://luxolog.github.io/Ekhaya-Campus-Connect/campusconnect/`
 
 ## Two institution operating modes
 
@@ -49,12 +49,18 @@ An institution can start with recruitment and CRM, then adopt selected admission
 - Ekhaya platform institution directory and portal-mode configuration
 - Proposed Starter, Growth and Professional subscription display
 
+## Student account page
+
+The student account page is available at `account.html` and is linked from the CampusConnect navigation. It uses the Supabase project configured for CampusConnect and supports email/password registration, email verification redirects, sign-in, password reset, sign-out and editing the student's own profile. The browser uses only the Supabase publishable key; no service-role key is included.
+
+Before testing registration, configure the Supabase Auth Site URL as `https://luxolog.github.io/Ekhaya-Campus-Connect/` and allow the exact redirect URL `https://luxolog.github.io/Ekhaya-Campus-Connect/campusconnect/account.html`. Configure production SMTP before inviting real students. The profile page depends on the existing `student_profiles` table, its own-row RLS policies and the auth profile bootstrap trigger.
+
 ## Important prototype limitations
 
 This is a **front-end demonstration only**:
 - Demo applications and settings are saved in the current browser's localStorage.
 - Seed records are fictional.
-- No real authentication, role isolation, central database, API integration, messaging, file uploads, payment processing or production queue service is connected.
+- The account page connects to Supabase Auth and the student profile table. The course finder, application submission, college workspace and platform administration remain demonstration-only and use browser localStorage. There is no production college tenant access, application routing, messaging, document upload, payment processing or queue service.
 - Do not enter real student personal information, ID numbers, academic records or upload confidential documents.
 - The sample institution/course listings, prices and statuses are illustrative and are not confirmation of live availability, accreditation, fees or admission.
 
