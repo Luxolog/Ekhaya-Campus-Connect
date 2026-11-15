@@ -143,3 +143,8 @@ The expanded seven-area CampusConnect platform scope—College Management, Learn
 ## Foundation remediation plan
 
 The controlled, dependency-ordered remediation plan for migration reconciliation, organisation and tenant boundaries, membership and capability authorisation, table-level RLS/grants, tenant-safe constraints, consent, private storage, audit, security tests and release gates is documented in [CampusConnect Foundation Remediation Plan](architecture/foundation-remediation-plan.md). This is a proposed plan only; it does not authorise or perform database or production changes.
+
+## Education bookshops and study materials
+
+CampusConnect's Partner Network will support verified college bookshops, campus bookstores, textbook suppliers and publishers. Students should be able to find prescribed college textbooks and course booklists, as well as a dedicated set of matric rewrite / Amended Senior Certificate textbooks, study guides and past-paper resources. The first approach is free partner listings and direct links to bookshops' own ordering channels—not a CampusConnect retail marketplace or checkout.
+
