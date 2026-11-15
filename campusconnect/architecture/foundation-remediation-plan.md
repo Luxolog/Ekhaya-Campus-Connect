@@ -199,6 +199,23 @@ Support free referrals and sponsored counselling with minimum necessary informat
 ### Partner Network and Integrations
 This is a partner/service directory, agreement register and integration catalogue, not a consumer shopping marketplace. Integrations use scoped credentials, explicit data contracts, minimum permissions, event logging, retries, idempotency, revocation and health monitoring. No unauthorised portal scraping or direct device writes.
 
+
+## 11.1 Education bookshop and study-material partners
+
+The Partner Network must support verified bookshops, campus bookstores, textbook suppliers, publishers and approved education-material providers.
+
+Required use cases:
+- College/course booklists with prescribed title, edition and ISBN references.
+- Student discovery of suppliers able to fulfil required textbooks and reading lists.
+- Provider-submitted availability, indicative pricing, collection/delivery information and student discounts.
+- Direct order/contact links to the provider's own sales channel; optional affiliate referral tracking only under an agreed transparent arrangement.
+- Matric rewrite / Amended Senior Certificate study materials, including textbooks, study guides and past-paper resources, discoverable as a dedicated education-support category.
+- Separate college-prescribed booklists from general matric rewrite preparation materials so students can find the correct curriculum and examination pathway.
+
+This is a Partner Network directory/referral capability, not a retail marketplace. No general product catalogue, stock ownership, checkout or payment processing is proposed for CampusConnect. Begin with free listings and direct provider links. Do not represent stock or prices as live unless the bookshop supplies a current verified feed/update.
+
+The data model should keep provider identity, booklist references, ISBN/edition metadata, curriculum/exam relevance, listing validity and referral events distinct from college admissions, student academic records and any payment data held by the provider.
+
 ## 12. Security verification matrix
 
 Create automated tests and repeat them against a non-production environment before every release. Use at least two colleges, two students, two staff members, two external organisations and one platform operator in the fixtures.
