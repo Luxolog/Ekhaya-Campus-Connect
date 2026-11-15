@@ -57,3 +57,8 @@ This repository is a prototype. No programme, accreditation, fee, contact detail
 - Career Finder quiz routes prospective students to relevant study areas.
 - Programme pages provide a foundation for requirements, fees, intakes and career pathways.
 - Application and admissions journeys are separated so they can later connect to CRM/application systems.
+
+
+## CampusConnect pilot
+
+A new CampusConnect student recruitment and admissions platform demonstration is available at [`/campusconnect/`](campusconnect/). It supports both colleges with an existing student portal (integration / managed hand-off model) and colleges that need a complete admissions workspace. See [CampusConnect documentation](campusconnect/README.md) for scope, demo limitations, production architecture and roadmap.
