@@ -217,3 +217,41 @@ The full constraint pass confirmed:
 The connected Supabase MCP surface provides structured table inventory and read-only SQL catalog queries, but no `pg_dump`/schema-export operation was available in the inspected tool set. The material recorded here is therefore a catalog-derived schema inventory, not a byte-for-byte `pg_dump --schema-only` artifact and not a runnable baseline migration.
 
 To obtain an authoritative schema-only dump, use the Supabase Dashboard or an authenticated Supabase CLI workflow from a trusted local environment. Do not attempt filesystem access or shell execution through SQL. Until that dump and the original migration sources are available, keep the canonical replayable baseline marked **not established**.
+
+
+## 12. Raw ACL and default-privilege verification (read-only follow-up)
+
+The raw PostgreSQL ACL catalog was inspected after the effective-privilege pass. This resolves the earlier uncertainty: the broad privileges are not explained only by inherited PUBLIC grants.
+
+### Explicit table ACLs
+
+The `relacl` values show direct grants from the `postgres` owner to `anon`, `authenticated`, and `service_role` on the CampusConnect tables:
+
+- `application_documents`, `applications`, `audit_events`, `courses`, `student_consents`, and `student_profiles`: `anon` and `authenticated` have `arwdDxtm` (SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER).
+- `college_memberships` and `colleges`: `anon` and `authenticated` have `rDxtm` (SELECT, TRUNCATE, REFERENCES, TRIGGER).
+- `college_registration_requests`: `anon` and `authenticated` have INSERT only (`a`).
+- `service_role` has broad table privileges on the application tables, as expected for the trusted server role; keep service-role credentials server-side.
+
+RLS remains an independent row-level gate, but it does not make unnecessary table privileges desirable. In particular, TRUNCATE, REFERENCES and TRIGGER are not normal client application requirements. The direct grants should be replaced with an explicit minimum-operation matrix, preserving only the operations required by each role and each table.
+
+### Default privileges
+
+The database has default ACL entries for future objects in `public` owned by both `postgres` and `supabase_admin`. The `postgres` default ACL entries explicitly grant the following to `anon`, `authenticated`, and `service_role`:
+
+- Future tables: `arwdDxtm` (all table privileges represented by that ACL).
+- Future functions: EXECUTE.
+- Future sequences: USAGE, SELECT and UPDATE.
+
+This means new objects created by the relevant owner may inherit overly broad client-role grants unless the defaults are corrected. The public default ACLs must be included in the least-privilege remediation, not just existing table ACLs.
+
+The raw ACL query also showed the two CampusConnect private functions have EXECUTE granted only to `postgres`. The `private` schema itself has no USAGE or CREATE for `anon`, `authenticated`, or `service_role`; postgres has both.
+
+### Corrective action — not yet applied
+
+1. Define a per-table and per-operation grant matrix for `anon`, `authenticated`, and `service_role`.
+2. Review all RLS policies against the minimum grants needed for each workflow.
+3. Prepare explicit REVOKE/GRANT statements for existing CampusConnect objects and ALTER DEFAULT PRIVILEGES statements for the actual object owners.
+4. Test the complete grant and policy matrix in a non-production branch, including signup/profile bootstrap, public course listing, consent grant/revoke, application submission, college staff workflows, document metadata, and college registration request submission.
+5. Apply to the live project only after review, backup, and explicit approval.
+
+No ACLs, default privileges, RLS policies, schema objects, or migration records were changed during this follow-up.
