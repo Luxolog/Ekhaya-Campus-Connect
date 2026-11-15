@@ -120,21 +120,21 @@ The first release must deliver one complete student-to-college admissions journe
 
 These stages are product sequencing, not promises that every module will be ready for the first holiday pilot. Each stage needs its own scope, acceptance tests and release approval.
 
-## 4. December delivery gates
+## 4. Stage 1 delivery gates
 
 | Gate | Target | Required evidence |
 |---|---|---|
 | Foundation review | 22 Nov | Migration provenance decision, verified baseline plan, privilege/tenant design |
 | Student and college onboarding | 29 Nov | Auth lifecycle tests and college request submission/review tests |
-| Core college workflow | 6 Dec | Tenant-scoped college/course/application workflow passes |
-| Opportunities and learning essentials | 13 Dec | Jobs, Holiday Jobs, Work Experience and LMS smoke tests |
-| Student services and partner directory | 17 Dec | Funding, wellness, bookshop and partner directory smoke tests |
-| Feature freeze | 20 Dec | Agreed MVP scope implemented; no new features without release-owner decision |
+| Student application journey | 6 Dec | Approved catalogue, application submission, student tracking and consent tests |
+| College admissions workflow | 13 Dec | Staff access, application review, status/decision updates and tenant-isolation tests |
+| Registration follow-through | 17 Dec | Accepted-student checklist/instructions and notification or manual follow-up path |
+| Feature freeze | 20 Dec | Stage 1 scope complete; no new features without release-owner decision |
 | Holiday pilot preparation | 21–31 Dec | Security, functional, responsive, regression and operational checks; pilot environment and synthetic test accounts ready |
-| Controlled holiday pilot | Dec 2026–Jan 2027 | Invited testers complete agreed journeys; defects logged, prioritised and fixed |
+| Controlled holiday pilot | Dec 2026–Jan 2027 | Invited testers complete the full admissions journey; defects logged, prioritised and fixed |
 | Early-2027 introduction gate | After pilot | Security, privacy, operational and product-owner sign-off; no unresolved release-blocking defects |
 
-Dates are targets, not evidence of completion. Reforecast immediately if a gate fails.
+Stages 2–4 are not December launch gates. They begin after the Stage 1 pilot has produced evidence and the product owner has approved the next scope. Dates are targets, not evidence of completion; reforecast immediately if a gate fails.
 
 ## 5. Test and release evidence required
 
