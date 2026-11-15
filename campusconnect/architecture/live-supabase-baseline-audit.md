@@ -126,3 +126,94 @@ The correct next sequence is:
 This audit was read-only. No SQL DDL/DML, migration-ledger repair, Auth setting change, PR merge, branch rebase, or deployment was performed.
 
 The snapshot reflects the state returned by the connected Supabase project at the inspection time. It is not a penetration test, POPIA compliance assessment, or guarantee that every possible database object or external Auth setting has been inspected.
+
+
+## 10. Extended catalog verification (read-only follow-up)
+
+A second catalog pass was completed after the initial audit.
+
+### Confirmed environment objects
+
+- The `public` schema contains exactly the nine CampusConnect tables listed above.
+- A `private` schema contains the two CampusConnect helper functions below.
+- Supabase-managed schemas (`auth`, `storage`, `realtime`, `vault`, `extensions`, and others) also contain platform-owned objects. These are not part of the CampusConnect application baseline and must not be copied wholesale into application migrations.
+- `storage.buckets` contains zero buckets.
+- All nine public tables have RLS enabled and `FORCE ROW LEVEL SECURITY` disabled.
+- Installed extensions observed: `pg_stat_statements 1.11`, `pgcrypto 1.3`, `plpgsql 1.0`, `supabase_vault 0.3.2`, and `uuid-ossp 1.1`.
+
+### CampusConnect helper function definitions
+
+Observed definition of `private.handle_campusconnect_user_signup()`:
+
+```sql
+CREATE OR REPLACE FUNCTION private.handle_campusconnect_user_signup()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+begin
+  insert into public.student_profiles (
+    user_id,
+    first_name,
+    last_name,
+    email
+  )
+  values (
+    new.id,
+    nullif(trim(new.raw_user_meta_data ->> 'first_name'), ''),
+    nullif(trim(new.raw_user_meta_data ->> 'last_name'), ''),
+    new.email
+  )
+  on conflict (user_id) do nothing;
+
+  return new;
+end;
+$function$;
+```
+
+Observed definition of `private.touch_updated_at()`:
+
+```sql
+CREATE OR REPLACE FUNCTION private.touch_updated_at()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SET search_path TO ''
+AS $function$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$function$;
+```
+
+The signup function reads user-editable `raw_user_meta_data` only to populate profile display fields. It must not be extended to assign roles or privileges based on user metadata. Both functions have empty search_path settings. The signup function is SECURITY DEFINER; its trigger execution and ownership context should be preserved and reviewed carefully before any changes.
+
+### Updated-at triggers
+
+Four public row-level triggers execute `private.touch_updated_at()` before UPDATE:
+- `applications_touch_updated_at`
+- `colleges_touch_updated_at`
+- `courses_touch_updated_at`
+- `student_profiles_touch_updated_at`
+
+### Effective table privileges: clarification
+
+The follow-up used PostgreSQL `has_table_privilege`, which reports effective privileges (including privileges inherited through PUBLIC), not solely explicit grants to each role.
+
+The effective result is broad: `anon` and `authenticated` report SELECT, INSERT, UPDATE, DELETE, REFERENCES, TRIGGER and TRUNCATE on several CampusConnect tables, including profiles, consents, applications, application documents, courses and audit events. The registration request table is INSERT-only for these roles; colleges and memberships report SELECT plus REFERENCES/TRIGGER/TRUNCATE. This is a significant least-privilege remediation item. Before writing corrective GRANT/REVOKE statements, inspect the underlying ACL entries and default privileges to distinguish direct grants from inherited PUBLIC grants.
+
+### Constraint inventory observations
+
+The full constraint pass confirmed:
+- `applications_course_id_fkey` references `courses(id)` alone and uses ON DELETE SET NULL.
+- `applications_college_id_fkey` uses ON DELETE RESTRICT.
+- `application_documents_application_id_fkey` uses ON DELETE CASCADE.
+- `college_memberships` has UNIQUE (`college_id`, `user_id`).
+- The registration request table has bounded text checks, a South African province allow-list, portal-mode and status checks, and a reviewer FK with ON DELETE SET NULL.
+
+## 11. Export limitation
+
+The connected Supabase MCP surface provides structured table inventory and read-only SQL catalog queries, but no `pg_dump`/schema-export operation was available in the inspected tool set. The material recorded here is therefore a catalog-derived schema inventory, not a byte-for-byte `pg_dump --schema-only` artifact and not a runnable baseline migration.
+
+To obtain an authoritative schema-only dump, use the Supabase Dashboard or an authenticated Supabase CLI workflow from a trusted local environment. Do not attempt filesystem access or shell execution through SQL. Until that dump and the original migration sources are available, keep the canonical replayable baseline marked **not established**.
