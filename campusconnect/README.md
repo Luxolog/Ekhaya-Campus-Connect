@@ -129,3 +129,8 @@ The Ekhaya Technologies platform control plane, tenant onboarding/governance, pl
 ## Master system architecture
 
 The consolidated system architecture, tenant and trust boundaries, student lifecycle, academic and learning domains, attendance hardware gateway, college and platform workspaces, integrations, privacy/security model, migration readiness and phased roadmap are documented in [CampusConnect Master System Architecture](architecture/master-system-architecture.md). This is a design proposal only; no database changes or production feature deployments are included.
+
+
+## Implementation blueprint
+
+The dependency-ordered execution plan, workstreams, phase tasks, exit criteria, security and quality gates, first end-to-end pilot scenario and initial engineering backlog are documented in [CampusConnect Implementation Blueprint](architecture/implementation-blueprint.md). This is an execution plan only; it does not authorise or perform database changes.
