@@ -134,3 +134,8 @@ The consolidated system architecture, tenant and trust boundaries, student lifec
 ## Implementation blueprint
 
 The dependency-ordered execution plan, workstreams, phase tasks, exit criteria, security and quality gates, first end-to-end pilot scenario and initial engineering backlog are documented in [CampusConnect Implementation Blueprint](architecture/implementation-blueprint.md). This is an execution plan only; it does not authorise or perform database changes.
+
+
+## Expanded platform architecture and foundation gap assessment
+
+The expanded seven-area CampusConnect platform scope—College Management, Learning Management, Jobs (including dedicated Holiday Jobs), Work Experience, Student Funding, Student Wellness, and Partner Network/Integrations—plus the live GitHub/Supabase inspection findings, missing foundations, privacy boundaries and recommended delivery sequence are documented in [Expanded Platform Architecture and Foundation Gap Assessment](architecture/expanded-platform-architecture-and-gap-assessment.md). This is documentation only; no application, database or production configuration changes were made.
