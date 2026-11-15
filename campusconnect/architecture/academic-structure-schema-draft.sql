@@ -79,6 +79,7 @@ CREATE TABLE public.course_enrolments (
   updated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (college_id, course_offering_id, student_user_id),
   UNIQUE (college_id, id),
+  UNIQUE (college_id, id, course_offering_id),
   FOREIGN KEY (college_id, course_offering_id) REFERENCES public.course_offerings(college_id, id),
   CHECK (ends_on IS NULL OR starts_on IS NULL OR ends_on >= starts_on)
 );
@@ -115,14 +116,12 @@ CREATE TABLE public.class_group_enrolments (
   UNIQUE (college_id, class_group_id, course_enrolment_id),
   FOREIGN KEY (college_id, class_group_id, course_offering_id)
     REFERENCES public.class_groups(college_id, id, course_offering_id),
-  FOREIGN KEY (college_id, course_enrolment_id)
-    REFERENCES public.course_enrolments(college_id, id),
+  FOREIGN KEY (college_id, course_enrolment_id, course_offering_id)
+    REFERENCES public.course_enrolments(college_id, id, course_offering_id),
   CHECK (ends_on IS NULL OR starts_on IS NULL OR ends_on >= starts_on)
 );
--- A trigger/constraint validation is still required to ensure the referenced
--- course_enrolment.course_offering_id equals this row's course_offering_id.
--- For a fully declarative guarantee, add UNIQUE(college_id,id,course_offering_id)
--- to course_enrolments and use a 3-column composite FK.
+-- The three-column composite foreign key ensures the enrolment and group
+-- belong to the same course offering without relying on application checks.
 
 CREATE TABLE public.class_group_staff (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
