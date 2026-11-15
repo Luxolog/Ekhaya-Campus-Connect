@@ -169,3 +169,7 @@ Test at least two colleges:
 4. Prepare migration plan with composite keys, constraints, indexes, policies and audit hooks.
 5. Test with at least two colleges, multiple groups per offering, two students, lecturer assignments, registrar and attendance officer.
 6. Only after review, deploy a small migration and verify cross-tenant isolation before building UI.
+
+
+## Staff governance and permission model
+See [College Staff Governance and Permission Model](staff-governance-and-permissions.md) for the detailed invitation lifecycle, multi-role grants, anti-escalation rules, RLS boundaries and test plan. Key design decisions: one membership identity per college/user; multiple explicit role grants per membership; staff access begins only after verified invitation acceptance; privileged role changes use server-side approval and immutable audit events. The live membership table currently has only a single role column and no lifecycle status, so this requires a carefully reviewed compatibility migration later.
