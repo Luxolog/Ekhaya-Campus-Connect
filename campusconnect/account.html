@@ -39,6 +39,8 @@ h2{font-size:21px;margin:0 0 5px}.sub{color:var(--muted);font-size:13px;margin:0
 <div class="field"><label for="confirmPassword">Confirm password *</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="10" required></div>
 </div>
 <div class="notice">Use at least 10 characters. Keep your password private. Email verification may be required before you can sign in.</div>
+<div class="notice" style="font-size:13px;line-height:1.55"><label style="display:flex;gap:9px;align-items:flex-start"><input id="privacyAcknowledgement" type="checkbox" required style="width:18px;flex:0 0 18px;margin-top:3px"><span>I have read the <a href="../privacy-policy.html" target="_blank" rel="noopener">CampusConnect Privacy Notice</a>. I understand how my student account information will be used and protected. *</span></label></div>
+<div class="notice" style="font-size:13px;line-height:1.55"><label style="display:flex;gap:9px;align-items:flex-start"><input id="marketingOptIn" type="checkbox" style="width:18px;flex:0 0 18px;margin-top:3px"><span>Optional: Send me CampusConnect news, opportunities and programme updates. I can withdraw this preference at any time.</span></label></div>
 <div class="actions"><button class="btn" type="submit">Create account</button></div>
 </form>
 <form id="signinForm" class="auth-panel hidden">
@@ -131,11 +133,12 @@ h2{font-size:21px;margin:0 0 5px}.sub{color:var(--muted);font-size:13px;margin:0
     const first = $("firstName").value.trim(), last = $("lastName").value.trim();
     const email = $("signupEmail").value.trim().toLowerCase();
     const password = $("signupPassword").value, confirm = $("confirmPassword").value;
+    if (!$("privacyAcknowledgement").checked) return message("Please read and acknowledge the Privacy Notice before creating an account.", "error");
     if (password !== confirm) return message("The passwords do not match.", "error");
     if (password.length < 10) return message("Choose a password with at least 10 characters.", "error");
     const { data, error } = await client.auth.signUp({
       email, password,
-      options: { emailRedirectTo: ACCOUNT_URL, data: { first_name: first, last_name: last } }
+      options: { emailRedirectTo: ACCOUNT_URL, data: { first_name: first, last_name: last, privacy_notice_acknowledged_at: new Date().toISOString(), privacy_notice_version: "2026-11-16", marketing_opt_in: $("marketingOptIn").checked } }
     });
     if (error) return message(error.message, "error");
     if (data.session && data.user) {
